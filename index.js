@@ -1,30 +1,56 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
+const bodyParser = require("body-parser");
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use = bodyParser.json();
 
 const dbUser = "organicProduct";
 const dbPass = "2zG20hqySsaxatsa";
 
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
 const uri =
   "mongodb+srv://organicProduct:2zG20hqySsaxatsa@cluster0.shttn.mongodb.net/organicDb?retryWrites=true&w=majority";
 
-  const client = new MongoClient(uri, {
+const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+
+
 client.connect((err) => {
-  const collection = client.db("organicDb").collection("products");
-    const product = { name: "modhu", price: 24, qty: 10};
-    collection.insertOne(product)
-    .then(res => {
-        console.log("one product added", res);
+  const productCollection = client.db("organicDb").collection("products");
+  app.post("/addProduct", (req, res) => {
+    const product = req.body;
+    productCollection.insertOne(product)
+    .then(result => {
+        console.log("data added successfully");
+        res.send("successfully sent")
     })
+
+  });
 });
 
-app.get("/", (req, res) => {
-  res.send("Learning mongo db");
-});
+
+client.connect(err => {
+    const productCollection = client.db("organicDb").collection("products");
+
+    app.get("/products", (req, res) => {
+        productCollection.find({})
+        .toArray((err, documents) => {
+            res.send(documents);
+
+        })
+    })
+})
+
 
 app.listen("3000", () => {
   console.log("Server is running on 3000");
