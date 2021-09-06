@@ -1,6 +1,7 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
+const ObjectId = require("mongodb").ObjectId;
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -49,6 +50,11 @@ client.connect(err => {
 
         })
     })
+})
+
+app.delete("/delete/:id", (req, res) => {
+  const productCollection = client.db("organicDb").collection("products");
+  productCollection.deleteOne({_id: ObjectId(req.params.id)})
 })
 
 

@@ -25,11 +25,21 @@
         .then((data) => {
           const container = document.getElementById("productContainer");
           data.map((product) => {
+            console.log(product);
             const item = document.createElement("p");
-            item.innerHTML = `${product.name}`;
+            item.innerHTML = `Name-${product.name} -- Price-${product.price}.
+                                                    <button onclick="deleteButton('${product._id}')">Delete</button>`;
             container.appendChild(item);
           });
         });
+
+      function deleteButton(id) {
+        fetch(`/delete/${id}`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((result) => console.log("Successfully deleted"));
+      }
     </script>
   </body>
 </html>
