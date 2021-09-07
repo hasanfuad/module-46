@@ -42,7 +42,7 @@ client.connect((err) => {
     productCollection.insertOne(product)
     .then(result => {
         console.log("data added successfully");
-        res.send("successfully sent")
+        res.redirect("/");
     })
 
   });

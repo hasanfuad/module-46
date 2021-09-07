@@ -53,9 +53,9 @@
             // console.log(data);
             const eachItemContainer = document.createElement("div");
             eachItemContainer.innerHTML = `
-                                        Price: <input type="text" value="${data.price}" id="productPrice"/>
+                                        Price: <input type="text" name="price" value='${data.price}' id="product-price"/>
                                         <br>
-                                        Qty: <input type="text" value="${data.quantity}" id="quantity"/>
+                                        Qty: <input type="text" name="quantity" value='${data.quantity}' id="quantity"/>
                                         <br>
                                         <button onclick="updateProduct('${data._id}')">Submit</button>
           `;
@@ -64,7 +64,7 @@
       }
 
       function updateProduct(id) {
-        const price = document.getElementById("productPrice").value;
+        const price = document.getElementById("product-price").value;
         const quantity = document.getElementById("quantity").value;
         const product = { id, price, quantity };
 
