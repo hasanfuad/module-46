@@ -73,6 +73,9 @@ app.patch("/update/:id", (req, res) => {
 
 app.delete("/delete/:id", (req, res) => {
   productCollection.deleteOne({_id: ObjectId(req.params.id)})
+  .then( result => {
+    res.send(result.deletedCount > 0)
+  })
 })
 
 

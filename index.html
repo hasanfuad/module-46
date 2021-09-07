@@ -32,17 +32,21 @@
             item.innerHTML = `Name-${product.name} -- Price-${product.price}.
                               Qty-${product.quantity}
                                                     <button onclick="loadData('${product._id}')">Update</button>
-                                                    <button onclick="deleteButton('${product._id}')">Delete</button>`;
+                                                    <button onclick="deleteButton(event, '${product._id}')">Delete</button>`;
             container.appendChild(item);
           });
         });
 
-      function deleteButton(id) {
+      function deleteButton(event, id) {
         fetch(`/delete/${id}`, {
           method: "DELETE",
         })
           .then((res) => res.json())
-          .then((result) => console.log("Successfully deleted"));
+          .then((result) => {
+            if (result) {
+              event.target.parentNode.style.display = "none";
+            }
+          });
       }
 
       function loadData(id) {
@@ -50,7 +54,6 @@
         fetch(`/product/${id}`)
           .then((res) => res.json())
           .then((data) => {
-            // console.log(data);
             const eachItemContainer = document.createElement("div");
             eachItemContainer.innerHTML = `
                                         Price: <input type="text" name="price" value='${data.price}' id="product-price"/>
