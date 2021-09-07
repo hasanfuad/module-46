@@ -9,8 +9,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use = bodyParser.json();
 
-const dbUser = "organicProduct";
-const dbPass = "2zG20hqySsaxatsa";
+// const dbUser = "organicProduct";
+// const dbPass = "2zG20hqySsaxatsa";
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -25,9 +25,18 @@ const client = new MongoClient(uri, {
 });
 
 
+const productCollection = client.db("organicDb").collection("products");
+
+app.get("/product/:id", (req, res) => {
+  productCollection.find({_id: ObjectId(req.params.id)})
+  .toArray((err, documents)=>{
+    res.send(documents[0]);
+  })
+})
+
+
 
 client.connect((err) => {
-  const productCollection = client.db("organicDb").collection("products");
   app.post("/addProduct", (req, res) => {
     const product = req.body;
     productCollection.insertOne(product)
@@ -41,7 +50,6 @@ client.connect((err) => {
 
 
 client.connect(err => {
-    const productCollection = client.db("organicDb").collection("products");
 
     app.get("/products", (req, res) => {
         productCollection.find({})
@@ -52,8 +60,18 @@ client.connect(err => {
     })
 })
 
+app.patch("/update/:id", (req, res) => {
+  productCollection.updateOne({_id: ObjectId(req.params.id)},
+  {
+    $set: {price: req.body.price, quantity: req.body.quantity}
+  })
+  .then(result => {
+    console.log(result);
+  })
+  
+})
+
 app.delete("/delete/:id", (req, res) => {
-  const productCollection = client.db("organicDb").collection("products");
   productCollection.deleteOne({_id: ObjectId(req.params.id)})
 })
 

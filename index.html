@@ -13,11 +13,13 @@
       style="padding: 10px; border: 1px solid gray"
     ></div>
     <form action="/addProduct" method="post">
-      <input type="text" name="name" placeholder="Product Name" id="" />
-      <input type="text" name="price" placeholder="Product price" id="" />
-      <input type="text" name="quantity" placeholder="Product Qty" id="" />
+      <input type="text" name="name" placeholder="Product Name" id="name" />
+      <input type="text" name="price" placeholder="Product price" id="price" />
+      <input type="text" name="quantity" placeholder="Product Qty" id="qty" />
       <button type="submit">Add Product</button>
     </form>
+
+    <div id="showUpdateData"></div>
 
     <script>
       fetch("http://localhost:3000/products")
@@ -25,9 +27,11 @@
         .then((data) => {
           const container = document.getElementById("productContainer");
           data.map((product) => {
-            console.log(product);
+            // console.log(product);
             const item = document.createElement("p");
             item.innerHTML = `Name-${product.name} -- Price-${product.price}.
+                              Qty-${product.quantity}
+                                                    <button onclick="loadData('${product._id}')">Update</button>
                                                     <button onclick="deleteButton('${product._id}')">Delete</button>`;
             container.appendChild(item);
           });
@@ -39,6 +43,38 @@
         })
           .then((res) => res.json())
           .then((result) => console.log("Successfully deleted"));
+      }
+
+      function loadData(id) {
+        const container = document.getElementById("showUpdateData");
+        fetch(`/product/${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            // console.log(data);
+            const eachItemContainer = document.createElement("div");
+            eachItemContainer.innerHTML = `
+                                        Price: <input type="text" value="${data.price}" id="productPrice"/>
+                                        <br>
+                                        Qty: <input type="text" value="${data.quantity}" id="quantity"/>
+                                        <br>
+                                        <button onclick="updateProduct('${data._id}')">Submit</button>
+          `;
+            container.appendChild(eachItemContainer);
+          });
+      }
+
+      function updateProduct(id) {
+        const price = document.getElementById("productPrice").value;
+        const quantity = document.getElementById("quantity").value;
+        const product = { id, price, quantity };
+
+        fetch(`/update/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(product),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data));
       }
     </script>
   </body>
